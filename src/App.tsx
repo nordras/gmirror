@@ -1,30 +1,77 @@
 import React from "react";
-import "./App.css";
-import { graphql } from "babel-plugin-relay/macro";
+import "./AppStyle.ts";
+
 import {
   RelayEnvironmentProvider,
   loadQuery,
   usePreloadedQuery,
 } from "react-relay/hooks";
-import RelayEnvironment from "./RelayEnvironment";
-import { AppRepositoryNameQuery } from "./__generated__/AppRepositoryNameQuery.graphql";
+import RelayEnvironment from "./services/RelayEnvironment";
+import { graphql } from "babel-plugin-relay/macro";
+// import { AppRepositoryNameQuery } from "./__generated__/AppRepositoryNameQuery.graphql";
+import { AppRepositoryOwnerQuery } from "./__generated__/AppRepositoryOwnerQuery.graphql";
+
+// Components
+import Sidebar from "../src/components/sidebar";
+import Repolist from "../src/components/repolist";
+
+// Style
+import * as S from "./AppStyle";
+import repositoryOwnerQuery from "./graphql/repo";
 
 const { Suspense } = React;
 
 // Define a query
-const RepositoryNameQuery = graphql`
-  query AppRepositoryNameQuery {
-    repository(owner: "facebook", name: "relay") {
-      name
+// const RepositoryNameQuery = graphql`
+//   query AppRepositoryNameQuery {
+//     repository(owner: "nordras", name: "relay") {
+//       name
+//     }
+//   }
+// `;
+
+const RepositoryOwnerQuery = graphql`
+  query AppRepositoryOwnerQuery {
+    repositoryOwner(login: "nordras") {
+      ... on User {
+        avatarUrl
+        name
+        login
+        status {
+          id
+        }
+        bio
+        location
+        company
+        websiteUrl
+        twitterUsername
+        followers {
+          totalCount
+        }
+        following {
+          totalCount
+        }
+      }
+      repositories(last: 8) {
+        nodes {
+          name
+          description
+          primaryLanguage {
+            id
+          }
+          stargazerCount
+          forkCount
+        }
+      }
     }
   }
 `;
 
 // Immediately load the query as our app starts. For a real app, we'd move this
 // into our routing configuration, preloading data as we transition to new routes.
-const preloadedQuery = loadQuery<AppRepositoryNameQuery>(
+const preloadedQuery = loadQuery<AppRepositoryOwnerQuery>(
   RelayEnvironment,
-  RepositoryNameQuery,
+  RepositoryOwnerQuery,
   {
     /* query variables */
   }
@@ -39,17 +86,16 @@ const preloadedQuery = loadQuery<AppRepositoryNameQuery>(
 // - If the query failed, it throws the failure error. For simplicity we aren't
 //   handling the failure case here.
 function App(props: { preloadedQuery: typeof preloadedQuery }) {
-  const data = usePreloadedQuery<AppRepositoryNameQuery>(
-    RepositoryNameQuery,
+  const data = usePreloadedQuery<AppRepositoryOwnerQuery>(
+    RepositoryOwnerQuery,
     props.preloadedQuery
   );
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>{data?.repository?.name}</p>
-      </header>
-    </div>
+    <S.App className="App">
+      <Sidebar profile={data} />
+      <Repolist repositories={data} />
+    </S.App>
   );
 }
 
