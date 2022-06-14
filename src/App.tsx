@@ -59,6 +59,7 @@ const RepositoryOwnerQuery = graphql`
           description
           primaryLanguage {
             id
+            name
           }
           stargazerCount
           forkCount
