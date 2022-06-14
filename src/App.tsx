@@ -37,6 +37,7 @@ const RepositoryOwnerQuery = graphql`
         avatarUrl
         name
         login
+        email
         status {
           id
         }

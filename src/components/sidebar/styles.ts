@@ -3,13 +3,8 @@ import styled from "styled-components";
 import theme from "../../styles/theme";
 
 export const Wrapper = styled.section`
-  /* display: flex;
-  width: fit-content;
-  position: relative;
-  color: ${theme.colors.white};
-  flex: 1;
-  flex-wrap: nowrap; */
-
+  max-width: 350px;
+  padding: 1rem;
   img {
     border-radius: 50%;
     width: 200px;
