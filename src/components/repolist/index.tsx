@@ -9,7 +9,7 @@ const Repolist: React.FC<TRepolist> = ({ repositories }) => {
   const repos = repositories.repositoryOwner.repositories.nodes;
   return (
     <S.Wrapper>
-      <h5>Repositories</h5>
+      <h2>Repositories</h2>
       <br />
       <S.RepoGrid>
         {repos.map((repo: any) => (

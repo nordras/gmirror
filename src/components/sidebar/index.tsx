@@ -1,8 +1,12 @@
-import React from "react";
+import React, { FormEvent, useState } from "react";
 import * as S from "./styles";
 
 export type TSidebar = {
   profile: any;
+  search: {
+    searchFunc: (value: string) => void;
+    loading: boolean;
+  };
 };
 
 const Emoji = (props: { label: string; symbol: string }) => (
@@ -16,10 +20,27 @@ const Emoji = (props: { label: string; symbol: string }) => (
   </span>
 );
 
-const Sidebar: React.FC<TSidebar> = ({ profile }) => {
+const Sidebar: React.FC<TSidebar> = ({ profile, search }) => {
   const user = profile.repositoryOwner;
+
+  const [username, setUsername] = useState("");
+
+  function submitFunc(event: FormEvent) {
+    event.preventDefault();
+    search.searchFunc(username);
+  }
+
   return (
     <S.Wrapper>
+      <S.Search onSubmit={submitFunc}>
+        <input
+          type={"text"}
+          placeholder={"Github Username"}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />{" "}
+        <button className={search.loading ? "sending" : ""}>Search</button>
+      </S.Search>
       <img src={user.avatarUrl} alt={"Avatar"} />
       <h2>
         {user.name} - {user.login}
@@ -30,13 +51,14 @@ const Sidebar: React.FC<TSidebar> = ({ profile }) => {
         </h3>
       )}
       <article>{user.bio}</article>
+      <br />
       <div>
         <span>
-          <Emoji label="email" symbol="💓" /> Followers{" "}
+          <Emoji label="Followers" symbol="💓" /> Followers{" "}
           {user.followers.totalCount}
         </span>{" "}
         <span>
-          <Emoji label="email" symbol="👥" /> Following Following{" "}
+          <Emoji label="Following" symbol="👥" /> Following{" "}
           {user.following.totalCount}
         </span>
       </div>
