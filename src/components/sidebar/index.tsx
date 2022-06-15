@@ -5,7 +5,7 @@ export type TSidebar = {
   profile: any;
   search: {
     searchFunc: (value: string) => void;
-    loading: boolean;
+    loading?: boolean;
   };
 };
 
@@ -41,31 +41,37 @@ const Sidebar: React.FC<TSidebar> = ({ profile, search }) => {
         />{" "}
         <button className={search.loading ? "sending" : ""}>Search</button>
       </S.Search>
-      <img src={user.avatarUrl} alt={"Avatar"} />
-      <h2>
-        {user.name} - {user.login}
-      </h2>
-      {user.email && (
-        <h3>
-          <Emoji label="email" symbol="✉" /> {user.email}
-        </h3>
+      {user ? (
+        <>
+          <img src={user.avatarUrl} alt={"Avatar"} />
+          <h2>
+            {user.name} - {user.login}
+          </h2>
+          {user.email && (
+            <h3>
+              <Emoji label="email" symbol="✉" /> {user.email}
+            </h3>
+          )}
+          <article>{user.bio}</article>
+          <br />
+          <div>
+            <span>
+              <Emoji label="Followers" symbol="💓" /> Followers{" "}
+              {user.followers?.totalCount}
+            </span>{" "}
+            <span>
+              <Emoji label="Following" symbol="👥" /> Following{" "}
+              {user.following?.totalCount}
+            </span>
+          </div>
+          <h5>{user.company}</h5>
+          <div>{user.websiteUrl}</div>
+          <div>{user.twitterUsername}</div>
+          <div>{user.location}</div>
+        </>
+      ) : (
+        <section>No users have been found</section>
       )}
-      <article>{user.bio}</article>
-      <br />
-      <div>
-        <span>
-          <Emoji label="Followers" symbol="💓" /> Followers{" "}
-          {user.followers.totalCount}
-        </span>{" "}
-        <span>
-          <Emoji label="Following" symbol="👥" /> Following{" "}
-          {user.following.totalCount}
-        </span>
-      </div>
-      <h5>{user.company}</h5>
-      <div>{user.websiteUrl}</div>
-      <div>{user.twitterUsername}</div>
-      <div>{user.location}</div>
     </S.Wrapper>
   );
 };

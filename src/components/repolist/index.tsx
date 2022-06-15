@@ -6,13 +6,14 @@ export type TRepolist = {
 };
 
 const Repolist: React.FC<TRepolist> = ({ repositories }) => {
-  const repos = repositories.repositoryOwner.repositories.nodes;
+  const repos = repositories.repositoryOwner?.repositories?.nodes;
   return (
     <S.Wrapper>
       <h2>Repositories</h2>
       <br />
+      {!repos && <section>Respositories not available</section>}
       <S.RepoGrid>
-        {repos.map((repo: any) => (
+        {repos?.map((repo: any) => (
           <S.Repo key={repo.id}>
             <div>{repo.name}</div>
             <div>{repo.description}</div>

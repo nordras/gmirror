@@ -6,6 +6,7 @@ export const Wrapper = styled.section`
   max-width: 350px;
   padding: 1rem;
   color: ${theme.colors.white};
+  min-width: 235px;
   img {
     border-radius: 50%;
     width: 200px;

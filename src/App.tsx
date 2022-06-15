@@ -7,9 +7,11 @@ import {
   usePreloadedQuery,
   useQueryLoader,
 } from "react-relay/hooks";
+
 import RelayEnvironment from "./services/RelayEnvironment";
 import { graphql } from "babel-plugin-relay/macro";
 
+import type { AppRepositoryOwnerQuery as AppRepositoryOwnerQueryType } from "./__generated__/AppRepositoryOwnerQuery.graphql";
 import { AppRepositoryOwnerQuery } from "./__generated__/AppRepositoryOwnerQuery.graphql";
 
 // Components
@@ -61,58 +63,61 @@ const RepositoryOwnerQuery = graphql`
   }
 `;
 
+// Load before everything
 const preloadedQuery = loadQuery<AppRepositoryOwnerQuery>(
   RelayEnvironment,
   RepositoryOwnerQuery,
   {
-    username: "nordras",
+    username: "igorimaginationmedia",
   }
 );
 
-function App(props: { preloadedQuery: typeof preloadedQuery }) {
-  const [loading, setLoading] = useState(false);
-  const [username, setUsername] = useState("nordras");
+// type Props = {
+//   initialQueryRef: PreloadedQuery<AppQueryType>;
+// };
 
-  const data = usePreloadedQuery<AppRepositoryOwnerQuery>(
+// function App(props: { preloadedQuery: typeof preloadedQuery }) {
+
+const Content = (props: any) => {
+  console.log(props, props.queryRef);
+
+  const data = usePreloadedQuery<AppRepositoryOwnerQueryType>(
     RepositoryOwnerQuery,
-    props.preloadedQuery
+    props.queryRef
   );
-
-  const [queryRef, loadQuery] = useQueryLoader<AppRepositoryOwnerQuery>(
-    RepositoryOwnerQuery,
-    props.preloadedQuery /* initial query ref */
-  );
-
-  // const refetch = useCallback(() => {
-  //   loadQuery({ username });
-  // }, [loadQuery, username]);
-
-  // useEffect(() => console.log("queryRef", queryRef), [queryRef]);
 
   function searchFunc(value: string) {
-    console.log("searchFunc", value);
-    setUsername(value);
+    props.refetch(value);
   }
-
   return (
-    <S.App className="App">
-      <Sidebar profile={data} search={{ searchFunc, loading }} />
-      <Repolist repositories={data} />
-    </S.App>
+    <>
+      <S.App className="App">
+        <Sidebar profile={data} search={{ searchFunc }} />
+        {data && <Repolist repositories={data} />}
+      </S.App>
+    </>
   );
+};
+
+function App() {
+  const [queryRef, loadQuery] = useQueryLoader<AppRepositoryOwnerQueryType>(
+    RepositoryOwnerQuery,
+    preloadedQuery
+  );
+
+  const refetch = (username: string) => loadQuery({ username });
+
+  return <>{queryRef && <Content queryRef={queryRef} refetch={refetch} />}</>;
 }
 
-// The above component needs to know how to access the Relay environment, and we
-// need to specify a fallback in case it suspends:
-// - <RelayEnvironmentProvider> tells child components how to talk to the current
-//   Relay Environment instance
-// - <Suspense> specifies a fallback in case a child suspends.
-const AppRoot = () => (
-  <RelayEnvironmentProvider environment={RelayEnvironment}>
-    <Suspense fallback={"Loading..."}>
-      <App preloadedQuery={preloadedQuery} />
-    </Suspense>
-  </RelayEnvironmentProvider>
-);
+const AppRoot = () => {
+  return (
+    <RelayEnvironmentProvider environment={RelayEnvironment}>
+      <Suspense fallback={"Loading..."}>
+        <App />
+      </Suspense>
+    </RelayEnvironmentProvider>
+  );
+};
 
 export default AppRoot;
