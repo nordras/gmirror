@@ -107,14 +107,12 @@ function App(props: { preloadedQuery: typeof preloadedQuery }) {
 // - <RelayEnvironmentProvider> tells child components how to talk to the current
 //   Relay Environment instance
 // - <Suspense> specifies a fallback in case a child suspends.
-function AppRoot() {
-  return (
-    <RelayEnvironmentProvider environment={RelayEnvironment}>
-      <Suspense fallback={"Loading..."}>
-        <App preloadedQuery={preloadedQuery} />
-      </Suspense>
-    </RelayEnvironmentProvider>
-  );
-}
+const AppRoot = () => (
+  <RelayEnvironmentProvider environment={RelayEnvironment}>
+    <Suspense fallback={"Loading..."}>
+      <App preloadedQuery={preloadedQuery} />
+    </Suspense>
+  </RelayEnvironmentProvider>
+);
 
 export default AppRoot;
