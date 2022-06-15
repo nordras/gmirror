@@ -1,8 +1,4 @@
-# Front End Take Home
-
-For the next interview step, you need to prepare a presentation around a project that you coded yourself.
-
-The project be a user interface that mimics a GitHub user profile using:
+## Stack
 
 - React
 - Typescript
